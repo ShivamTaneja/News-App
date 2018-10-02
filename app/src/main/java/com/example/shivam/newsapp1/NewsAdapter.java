@@ -2,6 +2,7 @@ package com.example.shivam.newsapp1;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.MyViewHolder> 
 
         public MyViewHolder(View view) {
             super(view);
+
             webTitle = view.findViewById(R.id.webTitle);
             webUrl = view.findViewById(R.id.webUrl);
             sectionName = view.findViewById(R.id.sectionName);
@@ -54,6 +56,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.MyViewHolder> 
             str = "anonymous";
         }
         holder.author.setText(str);
+
       }
     @Override
     public int getItemCount() {

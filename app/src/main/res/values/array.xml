@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="content_name">
+        <item>Politics</item>
+        <item>Art and design</item>
+        <item>Media</item>
+        <item>Opinion</item>
+        <item>UK news</item>
+        <item>Film</item>
+        <item>US news</item>
+    </string-array>
+
+    <string-array name="order_name">
+        <item>newest</item>
+        <item>oldest</item>
+        <item>relevance</item>
+    </string-array>
+</resources>

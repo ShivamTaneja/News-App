@@ -1,6 +1,8 @@
 package com.example.shivam.newsapp1;
 
 import android.content.Context;
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,14 +14,17 @@ import java.util.List;
 
 public class NewsListLoader extends android.support.v4.content.AsyncTaskLoader<List<NewsList>> {
 
-    private static final String request_URL = "https://content.guardianapis.com/search?page-size=100&order-by=newest&show-fields=byline&q=politics&api-key=test";
-    public NewsListLoader(Context context) {
+    private String requestUrlModified="";
+    public static String request_URL = "https://content.guardianapis.com/search" ;
+
+    public NewsListLoader(Context context, String s) {
         super(context);
+        requestUrlModified = s;
     }
     @Override
     public List<NewsList> loadInBackground() {
 
-        URL url = createUrl(request_URL);
+        URL url = createUrl(requestUrlModified);
         String jsonResponse = "";
 
         try {
@@ -46,6 +51,7 @@ public class NewsListLoader extends android.support.v4.content.AsyncTaskLoader<L
         List<NewsList> newsList_temp = new LinkedList<>();
         if(newsJSON != null) {
             try {
+
                 JSONObject rootJsonObject = new JSONObject(newsJSON);
                 JSONObject jsonObject1 = rootJsonObject.getJSONObject("response");
                 JSONArray resultsJsonArray = jsonObject1.getJSONArray("results");
@@ -61,6 +67,8 @@ public class NewsListLoader extends android.support.v4.content.AsyncTaskLoader<L
 
                         JSONObject jsonObject_author = jsonObject.getJSONObject("fields");
                         String author = jsonObject_author.getString("byline");
+                        if(author.equals(""))
+                            author="anonymous";
 
                         String[] parts = webPublicationDate.split("T");
                         String part1 = parts[0];
@@ -71,13 +79,12 @@ public class NewsListLoader extends android.support.v4.content.AsyncTaskLoader<L
 
                         newsList_temp.add(new NewsList(webTitle, sectionName, part1, sub1_part2, webUrl, author));
                     }
-
-                    return newsList_temp;
                 }
             } catch (final JSONException e) {
                 e.printStackTrace();
             }
+            return newsList_temp;
         }
-        return null;
+            return null;
     }
 }

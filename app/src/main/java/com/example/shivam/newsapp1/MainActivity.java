@@ -2,9 +2,12 @@ package com.example.shivam.newsapp1;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
@@ -15,13 +18,16 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<NewsList>>{
-
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<NewsList>>
+{
     private RecyclerView recyclerView;
     private TextView blank_screen_message;
     ConnectivityManager connMgr;
@@ -83,7 +89,20 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @NonNull
     @Override
     public Loader<List<NewsList>> onCreateLoader(int id, @Nullable Bundle args) {
-        return new NewsListLoader(this);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String section = sharedPreferences.getString(getString(R.string.content_preference),"0");
+        String order = sharedPreferences.getString(getString(R.string.order_by_preference),"0");
+
+        Uri baseUri = Uri.parse(NewsListLoader.request_URL);
+        Uri.Builder uriBuilder= baseUri.buildUpon();
+
+        uriBuilder.appendQueryParameter("page-size", "10");
+        uriBuilder.appendQueryParameter("show-fields", "byline");
+        uriBuilder.appendQueryParameter("q", section);
+        uriBuilder.appendQueryParameter("order-by", order);
+        uriBuilder.appendQueryParameter("api-key",""); // add your key here
+        return new NewsListLoader(this, uriBuilder.toString());
     }
 
     @Override
@@ -119,6 +138,25 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     {
         recyclerView.setAdapter(new NewsAdapter(null));
     }
+
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.main,menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem menuItem)
+    {
+        int id = menuItem.getItemId();
+        if(id == R.id.action_settings)
+        {
+            Intent i = new Intent(this, SettingsActivity.class);
+            startActivity(i);
+            return true;
+        }
+        return super.onOptionsItemSelected(menuItem);
+    }
+
 }
 
 
